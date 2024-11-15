@@ -10,16 +10,21 @@ import com.example.notes.presentation.screens.maincards.ExercisesCard
 @Composable
 fun MainScreen(
     onDietFieldClicked: () -> Unit,
-    mealHistory: List<MealHistory>
+    mealHistory: List<MealHistory>,
+    onProgramFieldClicked: () -> Unit,
 ) {
     Column {
         DietCard(onDietFieldClicked = onDietFieldClicked, mealHistory = mealHistory)
-        ExercisesCard()
+        ExercisesCard(onClick = onProgramFieldClicked)
     }
 }
 
 @Preview (showSystemUi = true)
 @Composable
 private fun PreviewMainScreen() {
-    MainScreen({}, emptyList())
+    MainScreen(
+        onDietFieldClicked = {},
+        mealHistory = emptyList(),
+        onProgramFieldClicked = {}
+    )
 }

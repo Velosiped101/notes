@@ -1,5 +1,6 @@
 package com.example.notes.presentation.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.collection.MutableIntList
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -18,6 +19,9 @@ import com.example.notes.presentation.screens.diet.DietInfoScreen
 import com.example.notes.presentation.screens.diet.EditFoodScreen
 import com.example.notes.presentation.screens.diet.FoodItemState
 import com.example.notes.presentation.screens.diet.FoodManagerScreen
+import com.example.notes.presentation.screens.training.ProgramEditScreen
+import com.example.notes.utils.DayHolder
+import com.example.notes.utils.DayState
 import com.example.notes.utils.FoodHolder
 
 @Composable
@@ -40,15 +44,24 @@ fun Navigation(
     pickedFood: MutableState<Food>,
     pickedFoodList: MutableMap<Food, Int>,
     onConfirm: () -> Unit,
-    mealHistory: List<MealHistory>
+    mealHistory: List<MealHistory>,
+    dayHolderState: MutableState<DayHolder<DayState>>
 ) {
     NavHost(navController = navController, startDestination = Routes.Main.name) {
         composable(Routes.Main.name) {
-            MainScreen(mealHistory = mealHistory, onDietFieldClicked = {
-                navController.navigate(
-                    Routes.DietScr.name
-                )
-            })
+            MainScreen(
+                mealHistory = mealHistory,
+                onDietFieldClicked = {
+                    navController.navigate(
+                        Routes.DietScr.name
+                    )
+                },
+                onProgramFieldClicked = {
+                    navController.navigate(
+                        Routes.ProgramEdit.name
+                    )
+                }
+            )
         }
         composable(Routes.DietScr.name) {
             DietInfoScreen(
@@ -120,6 +133,12 @@ fun Navigation(
                 onDelete = onDelete
             )
         }
+        composable(Routes.ProgramEdit.name) {
+            ProgramEditScreen(
+                dayHolderState = dayHolderState,
+                onClick = {navController.navigateUp()}
+            )
+        }
     }
 }
 
@@ -128,5 +147,6 @@ enum class Routes {
     DietScr,
     FoodManager,
     AddMeal,
-    EditFood
+    EditFood,
+    ProgramEdit
 }

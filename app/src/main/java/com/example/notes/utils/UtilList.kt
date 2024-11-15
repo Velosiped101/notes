@@ -5,6 +5,7 @@ enum class DayType {
     Full,
     Chest,
     Back,
+    Shoulders,
     Arms,
     Legs,
     Core

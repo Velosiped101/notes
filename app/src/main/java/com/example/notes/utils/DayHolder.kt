@@ -1,5 +1,7 @@
 package com.example.notes.utils
 
+import com.example.notes.data.local.program.Program
+
 sealed class DayHolder<DayState>(
     val mondayState: DayState? = null,
     val fridayState: DayState? = null,
@@ -32,4 +34,5 @@ sealed class DayHolder<DayState>(
 
 data class DayState(
     val pickedDay: DayOfWeek,
+    val program: List<Program>
 )

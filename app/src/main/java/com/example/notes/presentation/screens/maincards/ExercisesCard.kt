@@ -1,6 +1,7 @@
 package com.example.notes.presentation.screens.maincards
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,7 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ExercisesCard(modifier: Modifier = Modifier) {
+fun ExercisesCard(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -60,7 +64,9 @@ fun ExercisesCard(modifier: Modifier = Modifier) {
                 // TODO: Graph field
             }
             Text(
-                modifier = Modifier.align(Alignment.End),
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .clickable { onClick() },
                 text = "Manage your program"
             )
         }
@@ -70,5 +76,5 @@ fun ExercisesCard(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun Preview() {
-    ExercisesCard()
+    ExercisesCard() {}
 }

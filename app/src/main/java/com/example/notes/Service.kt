@@ -14,6 +14,8 @@ import androidx.work.WorkRequest
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.notes.data.DietRepository
+import com.example.notes.data.ExerciseRepository
+import com.example.notes.data.ProgramRepository
 import com.example.notes.data.local.NotesDatabase
 import com.example.notes.data.remote.FoodApiConstants
 import com.example.notes.data.remote.FoodApiService
@@ -26,8 +28,12 @@ import java.util.concurrent.TimeUnit
 
 object Service {
     lateinit var dietRepository: DietRepository
+    lateinit var exerciseRepository: ExerciseRepository
+    lateinit var programRepository: ProgramRepository
 
     fun provide(context: Context){
         dietRepository = DietRepository(context)
+        exerciseRepository = ExerciseRepository(context)
+        programRepository = ProgramRepository(context)
     }
 }

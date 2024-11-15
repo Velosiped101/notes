@@ -48,7 +48,12 @@ class DietViewModel(
     val elementsToDelete = mutableStateListOf<Food>()
     val searchText = mutableStateOf("")
     val massText = mutableStateOf("")
-    val pickedFood = mutableStateOf(Food())
+    val pickedFood = mutableStateOf(Food(
+        foodName = "",
+        protein = 0,
+        fat = 0,
+        carbs = 0
+    ))
     val pickedFoodList = mutableStateMapOf<Food, Int>()
     val mealHistoryList = repository.getMealHistory()
 

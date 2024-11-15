@@ -65,9 +65,10 @@ import kotlin.math.exp
 
 @Composable
 fun ProgramEditScreen(
-    dayHolderState: MutableState<DayHolder<DayState>>
+    dayHolderState: MutableState<DayHolder<DayState>>,
+    onClick: () -> Unit
 ) {
-    Scaffold(topBar = { ProgramTopBar() }) {
+    Scaffold(topBar = { ProgramTopBar(onClick = onClick) }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -81,13 +82,34 @@ fun ProgramEditScreen(
                 dayHolderState = dayHolderState
             )
             when (dayHolderState.value) {
-                is DayHolder.Friday -> ProgramFragment(day = dummyDay)
-                is DayHolder.Monday -> ProgramFragment(day = dummyDay)
-                is DayHolder.Saturday -> ProgramFragment(day = dummyDay)
-                is DayHolder.Sunday -> ProgramFragment(day = dummyDay)
-                is DayHolder.Thursday -> ProgramFragment(day = dummyDay)
-                is DayHolder.Tuesday -> ProgramFragment(day = dummyDay)
-                is DayHolder.Wednesday -> ProgramFragment(day = dummyDay)
+                is DayHolder.Friday -> ProgramFragment(
+                    day = dummyDay,
+                    program = dayHolderState.value.fridayState?.program ?: emptyList()
+                )
+                is DayHolder.Monday -> ProgramFragment(
+                    day = dummyDay,
+                    program = dayHolderState.value.mondayState?.program ?: emptyList()
+                )
+                is DayHolder.Saturday -> ProgramFragment(
+                    day = dummyDay,
+                    program = dayHolderState.value.saturdayState?.program ?: emptyList()
+                )
+                is DayHolder.Sunday -> ProgramFragment(
+                    day = dummyDay,
+                    program = dayHolderState.value.sundayState?.program ?: emptyList()
+                )
+                is DayHolder.Thursday -> ProgramFragment(
+                    day = dummyDay,
+                    program = dayHolderState.value.thursdayState?.program ?: emptyList()
+                )
+                is DayHolder.Tuesday -> ProgramFragment(
+                    day = dummyDay,
+                    program = dayHolderState.value.tuesdayState?.program ?: emptyList()
+                )
+                is DayHolder.Wednesday -> ProgramFragment(
+                    day = dummyDay,
+                    program = dayHolderState.value.wednesdayState?.program ?: emptyList()
+                )
             }
         }
     }
@@ -95,14 +117,21 @@ fun ProgramEditScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ProgramTopBar(modifier: Modifier = Modifier) {
+private fun ProgramTopBar(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
     TopAppBar(
         title = { Text(text = "Customize your program") },
-        navigationIcon = { Icon(
-            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-            contentDescription = null,
-            modifier = Modifier.size(40.dp)
-        )}
+        navigationIcon = {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clickable { onClick() }
+            )
+        }
     )
 }
 
@@ -180,7 +209,8 @@ private fun DayText(
 
 @Composable
 private fun ProgramFragment(
-    day: MutableState<String>
+    day: MutableState<String>,
+    program: List<Program>
 ) {
     val expanded = remember {
         mutableStateOf(false)
@@ -220,7 +250,7 @@ private fun ProgramFragment(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            items(dummy) {
+            items(program) {
                 ProgramRow(
                     firstColumn = it.exercise,
                     secondColumn = it.sets.toString(),
@@ -254,7 +284,7 @@ fun ProgramRow(
     }
 }
 
-private val dummy = listOf<Program>(
+private val dummy = mutableListOf<Program>(
     Program(dayOfWeek = 1, exercise = "kushat", sets = 4, reps = 10),
     Program(dayOfWeek = 1, exercise = "spat", sets = 2, reps = 3),
     Program(dayOfWeek = 1, exercise = "youtube", sets = 4, reps = 4),
@@ -266,5 +296,5 @@ private val dummy = listOf<Program>(
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
-    ProgramFragment(day = mutableStateOf("Rest"))
+    ProgramFragment(day = mutableStateOf("Rest"), program = dummy)
 }

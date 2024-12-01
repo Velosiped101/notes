@@ -1,17 +1,15 @@
 package com.example.notes.presentation.navigation
 
-import androidx.activity.compose.BackHandler
-import androidx.collection.MutableIntList
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.notes.data.local.food.Food
+import com.example.notes.data.local.program.Exercise
+import com.example.notes.data.local.program.Program
 import com.example.notes.data.local.saveddata.mealhistory.MealHistory
 import com.example.notes.presentation.screens.MainScreen
 import com.example.notes.presentation.screens.diet.AddMealScreen
@@ -20,8 +18,8 @@ import com.example.notes.presentation.screens.diet.EditFoodScreen
 import com.example.notes.presentation.screens.diet.FoodItemState
 import com.example.notes.presentation.screens.diet.FoodManagerScreen
 import com.example.notes.presentation.screens.training.ProgramEditScreen
-import com.example.notes.utils.DayHolder
-import com.example.notes.utils.DayState
+import com.example.notes.presentation.screens.training.ProgramExecScreen
+import com.example.notes.utils.DayOfWeek
 import com.example.notes.utils.FoodHolder
 
 @Composable
@@ -45,7 +43,13 @@ fun Navigation(
     pickedFoodList: MutableMap<Food, Int>,
     onConfirm: () -> Unit,
     mealHistory: List<MealHistory>,
-    dayHolderState: MutableState<DayHolder<DayState>>
+    exerciseList: List<Exercise>,
+    programList: List<Program>,
+    insertToProgram: (Program) -> Unit,
+    deleteFromProgram: (Program) -> Unit,
+    date: String,
+    dayType: String,
+    todayProgram: List<Program>
 ) {
     NavHost(navController = navController, startDestination = Routes.Main.name) {
         composable(Routes.Main.name) {
@@ -60,6 +64,11 @@ fun Navigation(
                     navController.navigate(
                         Routes.ProgramEdit.name
                     )
+                },
+                date = date,
+                dayType = dayType,
+                startProgram = {
+                    navController.navigate(Routes.ProgramExec.name)
                 }
             )
         }
@@ -135,9 +144,15 @@ fun Navigation(
         }
         composable(Routes.ProgramEdit.name) {
             ProgramEditScreen(
-                dayHolderState = dayHolderState,
-                onClick = {navController.navigateUp()}
+                onBackClick = {navController.navigateUp()},
+                exerciseList = exerciseList,
+                onClick = insertToProgram,
+                onDelete = deleteFromProgram,
+                programList = programList
             )
+        }
+        composable(Routes.ProgramExec.name) {
+            ProgramExecScreen(programList = todayProgram)
         }
     }
 }
@@ -148,5 +163,6 @@ enum class Routes {
     FoodManager,
     AddMeal,
     EditFood,
-    ProgramEdit
+    ProgramEdit,
+    ProgramExec
 }

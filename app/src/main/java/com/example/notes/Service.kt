@@ -27,13 +27,15 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 object Service {
+    lateinit var db: NotesDatabase
     lateinit var dietRepository: DietRepository
     lateinit var exerciseRepository: ExerciseRepository
     lateinit var programRepository: ProgramRepository
 
     fun provide(context: Context){
-        dietRepository = DietRepository(context)
-        exerciseRepository = ExerciseRepository(context)
-        programRepository = ProgramRepository(context)
+        db = NotesDatabase.createDb(context)
+        dietRepository = DietRepository()
+        exerciseRepository = ExerciseRepository()
+        programRepository = ProgramRepository()
     }
 }

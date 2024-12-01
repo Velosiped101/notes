@@ -3,22 +3,13 @@ package com.example.notes
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import com.example.notes.data.local.food.Food
 import com.example.notes.presentation.screens.diet.DietViewModel
 import com.example.notes.presentation.navigation.Navigation
-import com.example.notes.presentation.screens.training.ProgramEditScreen
 import com.example.notes.presentation.screens.training.ProgramViewModel
 import com.example.notes.ui.theme.NotesTheme
-import com.example.notes.utils.DayHolder
-import com.example.notes.utils.DayOfWeek
-import com.example.notes.utils.DayState
-import com.example.notes.utils.FoodHolder
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +19,8 @@ class MainActivity : ComponentActivity() {
             val dietViewModel = viewModel(modelClass = DietViewModel::class.java)
             val programViewModel = viewModel(modelClass = ProgramViewModel::class.java)
             NotesTheme {
+                val programList = programViewModel.programList.collectAsState(initial = emptyList()).value
+                val todayProgram = programList.filter { it.dayOfWeek == programViewModel.currentDayOfWeek }
                 Navigation(
                     navController = navController,
                     foodItemState = { dietViewModel.getFoodById(it) },
@@ -48,7 +41,13 @@ class MainActivity : ComponentActivity() {
                     pickedFoodList = dietViewModel.pickedFoodList,
                     onConfirm = { dietViewModel.addToHistory() },
                     mealHistory = dietViewModel.mealHistoryList.collectAsState(initial = emptyList()).value,
-                    dayHolderState = programViewModel.dayHolderState
+                    exerciseList = programViewModel.exerciseList.collectAsState(initial = emptyList()).value,
+                    insertToProgram = { programViewModel.insertToProgram(it) },
+                    deleteFromProgram = { programViewModel.deleteFromProgram(it) },
+                    programList = programList,
+                    todayProgram = todayProgram,
+                    date = programViewModel.date,
+                    dayType = if (todayProgram.isEmpty()) "Rest day" else "Training day"
                 )
             }
         }

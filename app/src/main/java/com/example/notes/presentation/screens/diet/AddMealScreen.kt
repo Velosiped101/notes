@@ -240,18 +240,17 @@ private fun SuccessScreen(
                 onLongClick = {  },
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             )
-            if (isDialogActive.value) {
-                MassDialog(
-                    isDialogActive,
-                    massText,
-                    text,
-                    onClick,
-                    searchJob,
-                    foodHolderState
-                )
-            }
         }
     }
+    if (isDialogActive.value)
+        MassDialog(
+            isDialogActive,
+            massText,
+            text,
+            onClick,
+            searchJob,
+            foodHolderState
+        )
 }
 
 @Composable
@@ -281,18 +280,17 @@ private fun PickedFoodListScreen(
             ) {
                 pickedFoodList.entries.remove(it)
             }
-            if (isDialogActive.value) {
-                MassDialog(
-                    isDialogActive,
-                    massText,
-                    text,
-                    onClick,
-                    searchJob,
-                    foodHolderState
-                )
-            }
         }
     }
+    if (isDialogActive.value)
+        MassDialog(
+            isDialogActive,
+            massText,
+            text,
+            onClick,
+            searchJob,
+            foodHolderState
+        )
 }
 
 @Composable

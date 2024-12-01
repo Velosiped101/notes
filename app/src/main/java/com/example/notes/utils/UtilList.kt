@@ -1,22 +1,21 @@
 package com.example.notes.utils
 
-enum class DayType {
-    Rest,
-    Full,
+enum class DayOfWeek {
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday
+}
+
+enum class ExerciseType {
+    All,
     Chest,
     Back,
     Shoulders,
     Arms,
-    Legs,
-    Core
-}
-
-enum class DayOfWeek {
-    Monday,
-    Friday,
-    Tuesday,
-    Saturday,
-    Thursday,
-    Wednesday,
-    Sunday
+    Core,
+    Legs
 }

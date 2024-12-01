@@ -1,30 +1,22 @@
 package com.example.notes.data
 
-import android.content.Context
-import com.example.notes.data.local.program.Exercise
+import com.example.notes.Service
 import com.example.notes.data.local.program.Program
+import com.example.notes.data.local.program.ProgramDao
 import kotlinx.coroutines.flow.Flow
 
 class ProgramRepository(
-    context: Context
-): NotesRepository<Program> {
-    override fun getAll(): Flow<List<Program>> {
-        TODO("Not yet implemented")
+    private val dao: ProgramDao = Service.db.programDao()
+) {
+    fun getAll(): Flow<List<Program>> {
+        return dao.getAll()
     }
 
-    override fun getSearched(text: String): List<Program> {
-        TODO("Not yet implemented")
+    suspend fun insertToProgram(item: Program) {
+        dao.insert(item)
     }
 
-    override suspend fun delete(list: List<Program>) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun update(element: Program) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun insert(element: Program) {
-        TODO("Not yet implemented")
+    suspend fun deleteFromProgram(item: Program) {
+        dao.delete(item)
     }
 }

@@ -21,11 +21,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.notes.data.local.program.Program
 
 @Composable
 fun ExercisesCard(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    date: String,
+    dayType: String,
+    startProgram: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -40,15 +44,16 @@ fun ExercisesCard(
         ) {
             Row {
                 Column {
-                    Text(text = "05.02.25")
-                    Text(text = "DAY TYPE", fontSize = 30.sp)
+                    Text(text = date)
+                    Text(text = dayType, fontSize = 30.sp)
                 }
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     // TODO: Image
-                    IconButton(onClick = { /*TODO*/ }) {
+                    if (dayType != "Rest day")
+                    IconButton(onClick = startProgram) {
                         Text(text = "start")
                     }
                 }
@@ -76,5 +81,5 @@ fun ExercisesCard(
 @Preview
 @Composable
 private fun Preview() {
-    ExercisesCard() {}
+    ExercisesCard(date = "20.02.25", dayType = "Rest day", onClick = {}, startProgram = {})
 }

@@ -12,10 +12,13 @@ fun MainScreen(
     onDietFieldClicked: () -> Unit,
     mealHistory: List<MealHistory>,
     onProgramFieldClicked: () -> Unit,
+    date: String,
+    dayType: String,
+    startProgram: () -> Unit
 ) {
     Column {
         DietCard(onDietFieldClicked = onDietFieldClicked, mealHistory = mealHistory)
-        ExercisesCard(onClick = onProgramFieldClicked)
+        ExercisesCard(onClick = onProgramFieldClicked, date = date, dayType = dayType, startProgram = startProgram)
     }
 }
 
@@ -25,6 +28,9 @@ private fun PreviewMainScreen() {
     MainScreen(
         onDietFieldClicked = {},
         mealHistory = emptyList(),
-        onProgramFieldClicked = {}
+        onProgramFieldClicked = {},
+        date = "20.02.25",
+        dayType = "Rest day",
+        startProgram = {}
     )
 }

@@ -1,5 +1,7 @@
 package com.example.notes.utils
 
+import com.example.notes.data.local.program.Program
+
 sealed class FoodHolder<T>(
     val data: T? = null,
     val throwable: Throwable? = null

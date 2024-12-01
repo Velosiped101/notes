@@ -4,9 +4,12 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.room.Room
+import com.example.notes.Service
 import com.example.notes.data.local.NotesDatabase
 import com.example.notes.data.local.food.Food
+import com.example.notes.data.local.food.FoodDao
 import com.example.notes.data.local.saveddata.mealhistory.MealHistory
+import com.example.notes.data.local.saveddata.mealhistory.MealHistoryDao
 import com.example.notes.data.remote.FoodApiConstants
 import com.example.notes.data.remote.FoodApiResponse
 import com.example.notes.data.remote.FoodApiService
@@ -23,11 +26,9 @@ import java.util.Calendar
 import kotlin.coroutines.CoroutineContext
 
 class DietRepository(
-    context: Context
+    private val dao: FoodDao = Service.db.foodDao(),
+    private val mealHistoryDao: MealHistoryDao = Service.db.mealHistoryDao()
 ): NotesRepository<Food> {
-    private val db = NotesDatabase.createDb(context)
-    private val dao = db.foodDao()
-    private val mealHistoryDao = db.mealHistoryDao()
     private val apiService: FoodApiService = Retrofit.Builder()
         .baseUrl(FoodApiConstants.BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())

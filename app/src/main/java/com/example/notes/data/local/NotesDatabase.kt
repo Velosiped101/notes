@@ -31,7 +31,6 @@ abstract class NotesDatabase: RoomDatabase() {
                 NotesDatabase::class.java,
                 "notes-database"
             )
-                .fallbackToDestructiveMigration()
                 .createFromAsset("notesAssetDatabase.db")
                 .build()
         }

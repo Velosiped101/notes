@@ -13,13 +13,11 @@ import com.example.notes.data.local.program.Program
 import com.example.notes.data.local.saveddata.mealhistory.MealHistory
 import com.example.notes.presentation.screens.MainScreen
 import com.example.notes.presentation.screens.diet.AddMealScreen
-import com.example.notes.presentation.screens.diet.DietInfoScreen
 import com.example.notes.presentation.screens.diet.EditFoodScreen
 import com.example.notes.presentation.screens.diet.FoodItemState
 import com.example.notes.presentation.screens.diet.FoodManagerScreen
 import com.example.notes.presentation.screens.training.ProgramEditScreen
 import com.example.notes.presentation.screens.training.ProgramExecScreen
-import com.example.notes.utils.DayOfWeek
 import com.example.notes.utils.FoodHolder
 
 @Composable
@@ -55,10 +53,14 @@ fun Navigation(
         composable(Routes.Main.name) {
             MainScreen(
                 mealHistory = mealHistory,
-                onDietFieldClicked = {
-                    navController.navigate(
-                        Routes.DietScr.name
-                    )
+                onCreateNewRecipe = {
+
+                },
+                onAddMeal = {
+                    navController.navigate(Routes.AddMeal.name)
+                },
+                onManageLocalFoodDb = {
+                    navController.navigate(Routes.FoodManager.name)
                 },
                 onProgramFieldClicked = {
                     navController.navigate(
@@ -71,13 +73,6 @@ fun Navigation(
                     navController.navigate(Routes.ProgramExec.name)
                 }
             )
-        }
-        composable(Routes.DietScr.name) {
-            DietInfoScreen(
-                onAddMealClicked = { navController.navigate(Routes.AddMeal.name) },
-                onManageFoodClicked = { navController.navigate(Routes.FoodManager.name) }) {
-                navController.navigateUp()
-            }
         }
         composable(Routes.AddMeal.name) { AddMealScreen(
             text = searchText,
@@ -159,7 +154,6 @@ fun Navigation(
 
 enum class Routes {
     Main,
-    DietScr,
     FoodManager,
     AddMeal,
     EditFood,

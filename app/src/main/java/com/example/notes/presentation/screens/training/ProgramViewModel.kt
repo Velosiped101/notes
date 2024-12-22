@@ -1,5 +1,6 @@
 package com.example.notes.presentation.screens.training
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

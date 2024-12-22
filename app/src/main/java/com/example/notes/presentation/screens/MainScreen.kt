@@ -9,7 +9,9 @@ import com.example.notes.presentation.screens.maincards.ExercisesCard
 
 @Composable
 fun MainScreen(
-    onDietFieldClicked: () -> Unit,
+    onCreateNewRecipe: () -> Unit,
+    onAddMeal: () -> Unit,
+    onManageLocalFoodDb: () -> Unit,
     mealHistory: List<MealHistory>,
     onProgramFieldClicked: () -> Unit,
     date: String,
@@ -17,20 +19,12 @@ fun MainScreen(
     startProgram: () -> Unit
 ) {
     Column {
-        DietCard(onDietFieldClicked = onDietFieldClicked, mealHistory = mealHistory)
+        DietCard(
+            onCreateNewRecipe = onCreateNewRecipe,
+            onAddMeal = onAddMeal,
+            onManageLocalFoodDb = onManageLocalFoodDb,
+            mealHistory = mealHistory
+        )
         ExercisesCard(onClick = onProgramFieldClicked, date = date, dayType = dayType, startProgram = startProgram)
     }
-}
-
-@Preview (showSystemUi = true)
-@Composable
-private fun PreviewMainScreen() {
-    MainScreen(
-        onDietFieldClicked = {},
-        mealHistory = emptyList(),
-        onProgramFieldClicked = {},
-        date = "20.02.25",
-        dayType = "Rest day",
-        startProgram = {}
-    )
 }

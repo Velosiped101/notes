@@ -26,27 +26,7 @@ fun ProgramExecScreen(
         mutableStateOf(0)
     }
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = programList[index.value].exercise)
-            Text(text = "Planned - ${programList[index.value].reps} reps")
-            repeat(programList[index.value].sets) {
-                val sliderValue = remember {
-                    mutableFloatStateOf(0f)
-                }
-                Column() {
-                    if (programList[index.value].sets > 1)
-                        Text(text = "Set ${it+1}: ${sliderValue.floatValue.toInt()} reps done.")
-                    Slider(
-                        value = sliderValue.floatValue,
-                        onValueChange = {sliderValue.floatValue = it},
-                        valueRange = 0f..programList[index.value].reps.toFloat()
-                    )
-                }
-            }
-        }
+        ProgramFragment(programItem = programList[index.value])
         Text(
             text = "next",
             modifier = Modifier
@@ -59,6 +39,29 @@ fun ProgramExecScreen(
                 .align(Alignment.CenterStart)
                 .clickable { if (index.value > 0) index.value-- }
         )
+    }
+}
+
+@Composable
+fun ProgramFragment(
+    programItem: Program
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = programItem.exercise)
+        Text(text = "Planned - ${programItem.reps} reps")
+        Column() {
+            val sliderValue = remember {
+                mutableFloatStateOf(0f)
+            }
+            Slider(
+                value = sliderValue.floatValue,
+                onValueChange = { sliderValue.floatValue = it },
+                valueRange = 0f..programItem.reps.toFloat()
+            )
+        }
     }
 }
 

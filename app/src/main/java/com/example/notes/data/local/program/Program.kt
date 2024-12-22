@@ -9,6 +9,5 @@ data class Program(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
     val dayOfWeek: String,
     val exercise: String,
-    val sets: Int,
     val reps: Int
 )

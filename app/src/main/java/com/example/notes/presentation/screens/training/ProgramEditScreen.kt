@@ -211,9 +211,8 @@ private fun ProgramFragment(
         ) {
             ProgramRow(
                 exercise = "Exercise",
-                sets = "Sets",
                 reps = "Reps",
-                onClick = null
+                onClick = { }
             )
             HorizontalDivider()
             LazyColumn(
@@ -223,7 +222,6 @@ private fun ProgramFragment(
                 items(program) {
                     ProgramRow(
                         exercise = it.exercise,
-                        sets = it.sets.toString(),
                         reps = it.reps.toString(),
                         onClick = {
                             isDialogActive.value = true
@@ -401,7 +399,7 @@ fun SetsAndRepsSetter(
         contentAlignment = Alignment.Center
     ) {
         val sets = remember {
-            mutableFloatStateOf(programItem?.sets?.toFloat() ?: 1f)
+            mutableFloatStateOf(1f)
         }
         val reps = remember {
             mutableFloatStateOf(programItem?.reps?.toFloat() ?: 1f)
@@ -416,8 +414,10 @@ fun SetsAndRepsSetter(
             ) {
                 Text(text = pickedExerciseName, fontSize = 22.sp)
                 Spacer(modifier = Modifier.height(12.dp))
-                Text(text = "Sets - ${sets.floatValue.toInt()}")
-                SetterSlider(type = sets, range = 1f..5f)
+                if (programItem == null) {
+                    Text(text = "Sets - ${sets.floatValue.toInt()}")
+                    SetterSlider(type = sets, range = 1f..5f)
+                }
                 Text(text = "Reps per set - ${reps.floatValue.toInt()}")
                 SetterSlider(type = reps, range = 1f..20f)
             }
@@ -438,18 +438,17 @@ fun SetsAndRepsSetter(
                         Icon(painter = painterResource(id = R.drawable.baseline_delete_24), contentDescription = null)
                     }
                 IconButton(onClick = {
-                    onConfirm(
-                        programItem?.copy(
-                            sets = sets.floatValue.toInt(),
-                            reps = reps.floatValue.toInt()
-                        ) ?:
-                        Program(
-                            dayOfWeek = dayOfWeek,
-                            exercise = pickedExerciseName,
-                            sets = sets.floatValue.toInt(),
-                            reps = reps.floatValue.toInt()
+                    repeat(sets.floatValue.toInt()) {
+                        onConfirm(
+                            programItem?.copy(
+                                reps = reps.floatValue.toInt()
+                            ) ?: Program(
+                                dayOfWeek = dayOfWeek,
+                                exercise = pickedExerciseName,
+                                reps = reps.floatValue.toInt()
+                            )
                         )
-                    )
+                    }
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_done_24),
@@ -497,9 +496,8 @@ fun SetterSlider(
 @Composable
 fun ProgramRow(
     exercise: String,
-    sets: String,
     reps: String,
-    onClick: (() -> Unit)?
+    onClick: (() -> Unit)
 ) {
     val style = TextStyle(
         fontSize = 16.sp,
@@ -509,12 +507,11 @@ fun ProgramRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp)
-            .clickable { onClick?.invoke() },
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(text = exercise, Modifier.weight(1f), style = style)
-        Text(text = sets, Modifier.weight(.2f), style = style)
         Text(text = reps, Modifier.weight(.2f), style = style)
     }
 }

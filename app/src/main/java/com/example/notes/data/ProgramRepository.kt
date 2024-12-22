@@ -19,4 +19,8 @@ class ProgramRepository(
     suspend fun deleteFromProgram(item: Program) {
         dao.delete(item)
     }
+
+//    fun getAllProgress(day: Int, month: Int, year: Int): Flow<List<ProgramProgress>> {
+//        return progressDao.getAll(day, month, year)
+//    }
 }

@@ -71,26 +71,57 @@ class DietRepository(
         return apiService.getFood(text)
     }
 
-    suspend fun getCombinedFoodList(text: String): FoodHolder<List<Food>> {
+    suspend fun getCombinedFoodList(
+        text: String,
+        getFromLocal: Boolean,
+        getFromRemote: Boolean,
+    ): FoodHolder<List<Food>> {
         return try {
-            val localList = getSearched(text)
-            val remoteList = getFoodFromApi(text).products?.mapNotNull {
-                if (
-                    it.productName == null || it.productName == "" ||
-                    it.nutriments == null ||
-                    it.nutriments.proteins == null ||
-                    it.nutriments.fat == null ||
-                    it.nutriments.carbohydrates == null
-                ) null
-                else Food(
-                    foodName = it.productName,
-                    protein = it.nutriments.proteins.toInt(),
-                    fat = it.nutriments.fat.toInt(),
-                    carbs = it.nutriments.carbohydrates.toInt()
-                )
-            } ?: throw Throwable("error")
-            val data = mutableListOf<Food>().plus(localList).plus(remoteList)
-            FoodHolder.Success(data)
+            if (getFromLocal && getFromRemote) {
+                val localList = getSearched(text)
+                val remoteList = getFoodFromApi(text).products?.mapNotNull {
+                    if (
+                        it.productName == null || it.productName == "" ||
+                        it.nutriments == null ||
+                        it.nutriments.proteins == null ||
+                        it.nutriments.fat == null ||
+                        it.nutriments.carbohydrates == null
+                    ) null
+                    else Food(
+                        foodName = it.productName,
+                        protein = it.nutriments.proteins.toInt(),
+                        fat = it.nutriments.fat.toInt(),
+                        carbs = it.nutriments.carbohydrates.toInt()
+                    )
+                } ?: throw Throwable("error")
+                val data = mutableListOf<Food>().plus(localList).plus(remoteList)
+                FoodHolder.Success(data)
+            }
+            else if (getFromLocal) {
+                val localList = getSearched(text)
+                FoodHolder.Success(localList)
+            }
+            else if (getFromRemote) {
+                val remoteList = getFoodFromApi(text).products?.mapNotNull {
+                    if (
+                        it.productName == null || it.productName == "" ||
+                        it.nutriments == null ||
+                        it.nutriments.proteins == null ||
+                        it.nutriments.fat == null ||
+                        it.nutriments.carbohydrates == null
+                    ) null
+                    else Food(
+                        foodName = it.productName,
+                        protein = it.nutriments.proteins.toInt(),
+                        fat = it.nutriments.fat.toInt(),
+                        carbs = it.nutriments.carbohydrates.toInt()
+                    )
+                } ?: throw Throwable("error")
+                FoodHolder.Success(remoteList)
+            }
+            else {
+                FoodHolder.Success(emptyList())
+            }
         } catch(e: Exception) {
             FoodHolder.Error(e)
         }

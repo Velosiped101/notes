@@ -1,22 +1,18 @@
 package com.example.notes.presentation.screens.diet
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,6 +31,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,9 +39,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,22 +51,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.painter.BrushPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.notes.R
@@ -86,18 +74,19 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMealScreen(
-    text: MutableState<String>,
-    onSearch: (String) -> Unit,
+    onSearch: () -> Unit,
     foodHolderState: MutableState<FoodHolder<List<Food>>>,
     massText: MutableState<String>,
     pickedFood: MutableState<Food>,
     onClick: () -> Unit,
     pickedFoodList: MutableMap<Food, Int>,
     onBackButtonClicked: () -> Unit,
-    onConfirm: () -> Unit
+    onConfirm: () -> Unit,
+    searchText: MutableState<String>,
+    getFromLocal: MutableState<Boolean>,
+    getFromRemote: MutableState<Boolean>,
 ) {
     BackHandler {
-        text.value = ""
         pickedFoodList.clear()
         foodHolderState.value = FoodHolder.Start()
         onBackButtonClicked()
@@ -118,7 +107,7 @@ fun AddMealScreen(
             TopAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 title = {
-                    SearchTextField(text = text) {
+                    SearchTextField(text = searchText) {
                         if (it.isBlank()) {
                             searchJob.value?.cancel()
                             searchJob.value = null
@@ -130,7 +119,7 @@ fun AddMealScreen(
                             searchJob.value = scope.launch {
                                 delay(1000L)
                                 foodHolderState.value = FoodHolder.Loading()
-                                onSearch(it)
+                                onSearch()
                             }
                         }
                     }
@@ -141,10 +130,10 @@ fun AddMealScreen(
                             .size(40.dp)
                             .clickable {
                                 pickedFoodList.clear()
-                                text.value = ""
+                                searchText.value = ""
                                 onBackButtonClicked()
                             },
-                        painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                        painter = painterResource(id = R.drawable.back),
                         contentDescription = null
                     )
                 },
@@ -161,12 +150,27 @@ fun AddMealScreen(
                                     onConfirm()
                                     pickedFoodList.clear()
                                 },
-                            painter = painterResource(id = R.drawable.baseline_done_24),
+                            painter = painterResource(id = R.drawable.confirm),
                             contentDescription = null
                         )
                     }
                 }
             )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                SearchCheckbox(
+                    text = "Local",
+                    checkboxState = getFromLocal,
+                    modifier = Modifier.weight(1f)
+                )
+                SearchCheckbox(
+                    text = "Remote",
+                    checkboxState = getFromRemote,
+                    modifier = Modifier.weight(1f)
+                )
+            }
             when (foodHolderState.value) {
                 is FoodHolder.Start ->
                     if (pickedFoodList.isEmpty()) StartScreen()
@@ -174,7 +178,7 @@ fun AddMealScreen(
                         pickedFoodList = pickedFoodList,
                         massText = massText,
                         isDialogActive = isDialogActive,
-                        text = text,
+                        text = searchText,
                         onClick = onClick,
                         searchJob = searchJob,
                         foodHolderState = foodHolderState
@@ -182,17 +186,47 @@ fun AddMealScreen(
                 is FoodHolder.TextChange -> {}
                 is FoodHolder.Loading -> LoadingScreen()
                 is FoodHolder.Success -> SuccessScreen(
-                    foodList = foodHolderState.value.data ?: emptyList(),
+                    foodList = foodHolderState.value.data,
                     isDialogActive = isDialogActive,
                     pickedFood = pickedFood,
                     massText = massText,
-                    text = text,
+                    text = searchText,
                     onClick = onClick,
                     searchJob = searchJob,
                     foodHolderState = foodHolderState
                 )
-                is FoodHolder.Error -> ErrorScreen()
+                is FoodHolder.Error -> ErrorScreen(error = foodHolderState.value.throwable?.message ?: "unknown error")
             }
+        }
+    }
+}
+
+@Composable
+private fun SearchCheckbox(
+    text: String,
+    checkboxState: MutableState<Boolean>,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        border = BorderStroke(1.dp, Color.Black),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Column(
+            modifier = Modifier.padding(1.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = text,
+                modifier = Modifier.width(100.dp),
+                textAlign = TextAlign.Center
+            )
+            Checkbox(
+                checked = checkboxState.value,
+                onCheckedChange = {
+                    checkboxState.value = !checkboxState.value
+                }
+            )
         }
     }
 }
@@ -217,7 +251,7 @@ private fun LoadingScreen() {
 
 @Composable
 private fun SuccessScreen(
-    foodList: List<Food>,
+    foodList: List<Food>?,
     isDialogActive: MutableState<Boolean>,
     pickedFood: MutableState<Food>,
     massText: MutableState<String>,
@@ -230,16 +264,21 @@ private fun SuccessScreen(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        items(foodList) { item ->
-            FoodCardItem(
-                food = item,
-                onFoodItemClicked = {
-                    isDialogActive.value = true
-                    pickedFood.value = item
-                },
-                onLongClick = {  },
-                colors = CardDefaults.cardColors(containerColor = Color.White)
-            )
+        if (!foodList.isNullOrEmpty()) {
+            items(foodList) { item ->
+                FoodCardItem(
+                    food = item,
+                    onFoodItemClicked = {
+                        isDialogActive.value = true
+                        pickedFood.value = item
+                    },
+                    onLongClick = { },
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                )
+            }
+        }
+        else item {
+            Text(text = "Found nothing")
         }
     }
     if (isDialogActive.value)
@@ -254,8 +293,11 @@ private fun SuccessScreen(
 }
 
 @Composable
-private fun ErrorScreen(modifier: Modifier = Modifier) {
-    Text(text = "error")
+private fun ErrorScreen(
+    modifier: Modifier = Modifier,
+    error: String
+) {
+    Text(text = error)
 }
 
 @Composable
@@ -317,8 +359,8 @@ private fun MassDialog(
     BasicAlertDialog(
         onDismissRequest = {
             isDialogActive.value = false
-            massText.value = ""
-            foodHolderState.value = FoodHolder.Start()
+//            massText.value = ""
+//            foodHolderState.value = FoodHolder.Start()
         }
     ) {
         val focusRequester = remember {
@@ -437,14 +479,14 @@ private fun PickedFoodListItem(
             Spacer(modifier = Modifier.width(4.dp))
             Text(text = "$mass g", textAlign = TextAlign.End)
             Icon(
-                painter = painterResource(id = R.drawable.outline_edit_24),
+                painter = painterResource(id = R.drawable.edit),
                 contentDescription = null,
                 Modifier
                     .clickable { onEdit() }
                     .size(25.dp)
             )
             Icon(
-                painter = painterResource(id = R.drawable.rounded_remove_24),
+                painter = painterResource(id = R.drawable.delete_from_list),
                 contentDescription = null,
                 Modifier
                     .clickable { onRemove() }
@@ -455,8 +497,20 @@ private fun PickedFoodListItem(
 }
 
 @SuppressLint("UnrememberedMutableState")
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun Preview() {
-    PickedFoodListItem(name = "Chebupelyahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh", mass = 500, onEdit = {}) {}
+    AddMealScreen(
+        onSearch = { /*TODO*/ },
+        foodHolderState = mutableStateOf(FoodHolder.Success(null)),
+        massText = mutableStateOf("500"),
+        pickedFood = mutableStateOf(Food(foodName = "sasf", protein = 40, fat = 10, carbs = 25)),
+        onClick = { /*TODO*/ },
+        pickedFoodList = mutableMapOf(),
+        onBackButtonClicked = { /*TODO*/ },
+        onConfirm = { /*TODO*/ },
+        searchText = mutableStateOf("pasta"),
+        getFromLocal = mutableStateOf(true),
+        getFromRemote = mutableStateOf(false)
+    )
 }

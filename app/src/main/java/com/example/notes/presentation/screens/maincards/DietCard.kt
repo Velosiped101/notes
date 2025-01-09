@@ -159,7 +159,7 @@ fun DietCard(
             Spacer(modifier = Modifier.height(8.dp))
             Icon(
                 painter = painterResource(
-                    id = R.drawable.baseline_expand_more_24
+                    id = R.drawable.expand_meal_history
                 ),
                 contentDescription = null,
                 Modifier
@@ -243,7 +243,7 @@ private fun PickDialog(
             ) {
                 DialogItem(
                     modifier = Modifier.weight(1f),
-                    iconRes = R.drawable.baseline_delete_24,
+                    iconRes = R.drawable.new_recipe,
                     text = "New recipe",
                     onClick = {
                         isDialogActive.value = false
@@ -252,7 +252,7 @@ private fun PickDialog(
                 )
                 DialogItem(
                     modifier = Modifier.weight(1f),
-                    iconRes = R.drawable.baseline_done_24,
+                    iconRes = R.drawable.add_meal,
                     text = "Add meal",
                     onClick = {
                         isDialogActive.value = false
@@ -261,7 +261,7 @@ private fun PickDialog(
                 )
                 DialogItem(
                     modifier = Modifier.weight(1f),
-                    iconRes = R.drawable.baseline_expand_less_24,
+                    iconRes = R.drawable.manage_food_db,
                     text = "Food manager",
                     onClick = {
                         isDialogActive.value = false
@@ -274,7 +274,7 @@ private fun PickDialog(
 }
 
 @Composable
-fun DialogItem(
+private fun DialogItem(
     modifier: Modifier = Modifier,
     iconRes: Int,
     text: String,

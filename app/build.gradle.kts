@@ -13,7 +13,7 @@ android {
         applicationId = "com.example.notes"
         minSdk = 21
         targetSdk = 34
-        versionCode = 1
+        versionCode = 4
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

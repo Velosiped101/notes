@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.notes.presentation.screens.diet.DietViewModel
@@ -23,17 +24,10 @@ class MainActivity : ComponentActivity() {
                 val todayProgram = programList.filter { it.dayOfWeek == programViewModel.currentDayOfWeek }
                 Navigation(
                     navController = navController,
-                    foodItemState = { dietViewModel.getFoodById(it) },
                     foodList = dietViewModel.foodListState.collectAsState(emptyList()).value,
-                    onInsert = { dietViewModel.insertFood(null) },
-                    onUpdate = { dietViewModel.insertFood(it) },
-                    onLongClick = { dietViewModel.onLongPress() },
-                    isInDeleteMode = dietViewModel.isInDeleteMode,
-                    onSelectedForDelete = { dietViewModel.onSelectedForDelete(it) },
-                    selectedItems = dietViewModel.elementsToDelete.toMutableList(),
-                    onDelete = { dietViewModel.deleteFood() },
-                    searchText = dietViewModel.searchText,
-                    onSearch = { dietViewModel.onSearch(it) },
+                    insertToFoodDb = {dietViewModel.createFood(it)},
+                    deleteFromFoodDb = {dietViewModel.deleteFood(it)},
+                    onSearch = { dietViewModel.onSearch() },
                     foodHolderState = dietViewModel.foodHolderState,
                     massText = dietViewModel.massText,
                     pickedFood = dietViewModel.pickedFood,
@@ -47,7 +41,11 @@ class MainActivity : ComponentActivity() {
                     programList = programList,
                     todayProgram = todayProgram,
                     date = programViewModel.date,
-                    dayType = if (todayProgram.isEmpty()) "Rest day" else "Training day"
+                    dayType = if (todayProgram.isEmpty()) "Rest day" else "Training day",
+                    searchText = dietViewModel.searchText,
+                    getFromRemote = dietViewModel.getFromRemote,
+                    getFromLocal = dietViewModel.getFromLocal,
+                    onCreateFromRecipe = { dietViewModel.createFood(it) }
                 )
             }
         }

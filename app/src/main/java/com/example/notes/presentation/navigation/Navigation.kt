@@ -2,20 +2,18 @@ package com.example.notes.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.example.notes.data.local.food.Food
 import com.example.notes.data.local.program.Exercise
 import com.example.notes.data.local.program.Program
 import com.example.notes.data.local.saveddata.mealhistory.MealHistory
 import com.example.notes.presentation.screens.MainScreen
 import com.example.notes.presentation.screens.diet.AddMealScreen
-import com.example.notes.presentation.screens.diet.EditFoodScreen
-import com.example.notes.presentation.screens.diet.FoodItemState
 import com.example.notes.presentation.screens.diet.FoodManagerScreen
+import com.example.notes.presentation.screens.diet.NewRecipeScreen
 import com.example.notes.presentation.screens.training.ProgramEditScreen
 import com.example.notes.presentation.screens.training.ProgramExecScreen
 import com.example.notes.utils.FoodHolder
@@ -23,17 +21,10 @@ import com.example.notes.utils.FoodHolder
 @Composable
 fun Navigation(
     navController: NavHostController,
-    foodItemState: (Int?) -> FoodItemState,
     foodList: List<Food>,
-    onUpdate: (Int) -> Unit,
-    onInsert: () -> Unit,
-    onLongClick: () -> Unit,
-    isInDeleteMode: MutableState<Boolean>,
-    onSelectedForDelete: (Food) -> Unit,
-    selectedItems: MutableList<Food>,
-    onDelete: () -> Unit,
-    searchText: MutableState<String>,
-    onSearch: (String) -> Unit,
+    deleteFromFoodDb: (SnapshotStateList<Food>) -> Unit,
+    insertToFoodDb: (Food) -> Unit,
+    onSearch: () -> Unit,
     foodHolderState: MutableState<FoodHolder<List<Food>>>,
     onDialogConfirm: () -> Unit,
     massText: MutableState<String>,
@@ -47,14 +38,18 @@ fun Navigation(
     deleteFromProgram: (Program) -> Unit,
     date: String,
     dayType: String,
-    todayProgram: List<Program>
+    todayProgram: List<Program>,
+    searchText: MutableState<String>,
+    getFromLocal: MutableState<Boolean>,
+    getFromRemote: MutableState<Boolean>,
+    onCreateFromRecipe: (Food) -> Unit
 ) {
     NavHost(navController = navController, startDestination = Routes.Main.name) {
         composable(Routes.Main.name) {
             MainScreen(
                 mealHistory = mealHistory,
                 onCreateNewRecipe = {
-
+                    navController.navigate(Routes.NewRecipe.name)
                 },
                 onAddMeal = {
                     navController.navigate(Routes.AddMeal.name)
@@ -75,7 +70,6 @@ fun Navigation(
             )
         }
         composable(Routes.AddMeal.name) { AddMealScreen(
-            text = searchText,
             onSearch = onSearch,
             foodHolderState = foodHolderState,
             massText = massText,
@@ -90,51 +84,17 @@ fun Navigation(
                         inclusive = true
                     }
                 }
-            }
+            },
+            searchText = searchText,
+            getFromLocal = getFromLocal,
+            getFromRemote = getFromRemote
         ) }
-        composable(
-            route = "${ Routes.EditFood.name }/{id}",
-            arguments = listOf(navArgument("id") {type = NavType.IntType })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getInt("id")
-            EditFoodScreen(
-                onBackButtonClicked = {
-                    navController.navigateUp()
-                },
-                onSaveButtonClicked = {
-                    id?.let {
-                        onUpdate(it)
-                        navController.navigateUp()
-                    }
-                },
-                foodItemState = foodItemState(id)
-            )
-        }
-        composable(
-            route = Routes.EditFood.name
-        ) {
-            EditFoodScreen(
-                onBackButtonClicked = {
-                    navController.navigateUp()
-                },
-                onSaveButtonClicked = {
-                    onInsert()
-                    navController.navigateUp()
-                },
-                foodItemState = foodItemState(null)
-            )
-        }
         composable(Routes.FoodManager.name) {
             FoodManagerScreen(
                 onBackButtonClicked = { navController.navigateUp() },
-                onAddButtonClicked = { navController.navigate(Routes.EditFood.name) },
-                onFoodItemClicked = { food -> navController.navigate("${Routes.EditFood.name}/${food.id}") },
                 foodList = foodList,
-                onLongClick = onLongClick,
-                isInDeleteMode = isInDeleteMode,
-                onSelectedForDelete = onSelectedForDelete,
-                selectedItems = selectedItems,
-                onDelete = onDelete
+                onDelete = { deleteFromFoodDb(it) },
+                onConfirm = { insertToFoodDb(it) }
             )
         }
         composable(Routes.ProgramEdit.name) {
@@ -149,6 +109,13 @@ fun Navigation(
         composable(Routes.ProgramExec.name) {
             ProgramExecScreen(programList = todayProgram)
         }
+        composable(Routes.NewRecipe.name) {
+            NewRecipeScreen(
+                onBackButtonClicked = { navController.navigateUp() }
+            ) {
+                onCreateFromRecipe(it)
+            }
+        }
     }
 }
 
@@ -156,7 +123,7 @@ enum class Routes {
     Main,
     FoodManager,
     AddMeal,
-    EditFood,
     ProgramEdit,
-    ProgramExec
+    ProgramExec,
+    NewRecipe
 }

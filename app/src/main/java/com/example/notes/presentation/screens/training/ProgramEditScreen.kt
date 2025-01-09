@@ -114,7 +114,7 @@ private fun ProgramTopBar(
         title = { Text(text = "Customize your program") },
         navigationIcon = {
             Icon(
-                painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                painter = painterResource(id = R.drawable.back),
                 contentDescription = null,
                 modifier = Modifier
                     .size(40.dp)
@@ -238,7 +238,7 @@ private fun ProgramFragment(
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.baseline_add_24),
+                    painter = painterResource(id = R.drawable.add_plus),
                     contentDescription = null
                 )
             }
@@ -280,6 +280,11 @@ fun ExercisePickDialog(
     dayOfWeek: MutableState<DayOfWeek>,
     programItem: Program?
 ) {
+    BackHandler(
+        enabled = programItem != null
+    ) {
+        isDialogActive.value = false
+    }
     val isExpanded = remember {
         mutableStateOf(false)
     }
@@ -427,7 +432,7 @@ fun SetsAndRepsSetter(
             ) {
                 IconButton(onClick = onBack) {
                     Icon(
-                        painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                        painter = painterResource(id = R.drawable.back),
                         contentDescription = null
                     )
                 }
@@ -435,7 +440,7 @@ fun SetsAndRepsSetter(
                     IconButton(onClick = {
                         onDelete(programItem)
                     }) {
-                        Icon(painter = painterResource(id = R.drawable.baseline_delete_24), contentDescription = null)
+                        Icon(painter = painterResource(id = R.drawable.delete), contentDescription = null)
                     }
                 IconButton(onClick = {
                     repeat(sets.floatValue.toInt()) {
@@ -451,7 +456,7 @@ fun SetsAndRepsSetter(
                     }
                 }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.baseline_done_24),
+                        painter = painterResource(id = R.drawable.confirm),
                         contentDescription = null
                     )
                 }

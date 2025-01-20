@@ -13,7 +13,7 @@ android {
         applicationId = "com.example.notes"
         minSdk = 21
         targetSdk = 34
-        versionCode = 4
+        versionCode = 5
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -77,9 +77,11 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation ("androidx.navigation:navigation-compose:$nav_version")
-    implementation("androidx.work:work-runtime-ktx:$work_version")
+    implementation ("androidx.work:work-runtime-ktx:$work_version")
+    implementation (libs.coil3.coil.compose)
+    implementation ("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
 
-    implementation("androidx.room:room-runtime:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
+    implementation ("androidx.room:room-runtime:$room_version")
+    ksp ("androidx.room:room-compiler:$room_version")
+    implementation ("androidx.room:room-ktx:$room_version")
 }

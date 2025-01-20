@@ -6,8 +6,9 @@ import androidx.room.PrimaryKey
 @Entity
 data class Food(
     @PrimaryKey(autoGenerate = true) var id: Int? = null,
-    var foodName: String,
-    var protein: Int,
-    var fat: Int,
-    var carbs: Int
+    var name: String,
+    var protein: Double,
+    var fat: Double,
+    var carbs: Double,
+    var imageUrl: String?
 )

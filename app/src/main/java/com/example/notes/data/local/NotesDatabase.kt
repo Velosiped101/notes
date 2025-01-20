@@ -16,7 +16,7 @@ import com.example.notes.data.local.saveddata.mealhistory.MealHistoryDao
 
 @Database(
     entities = [Food::class, Exercise::class, MealHistory::class, Program::class],
-    version = 1
+    version = 5
 )
 abstract class NotesDatabase: RoomDatabase() {
     abstract fun foodDao(): FoodDao

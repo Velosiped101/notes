@@ -14,7 +14,7 @@ interface FoodDao {
     @Query("SELECT * from Food")
     fun getFoodList(): Flow<List<Food>>
 
-    @Query("SELECT * from Food WHERE foodName LIKE '%' || :searchedFood || '%'")
+    @Query("SELECT * from Food WHERE name LIKE '%' || :searchedFood || '%'")
     fun getSearchedFoodList(searchedFood: String): List<Food>
 
     @Query("SELECT * from Food WHERE id = :index")

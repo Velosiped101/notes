@@ -19,6 +19,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val dietViewModel = viewModel(modelClass = DietViewModel::class.java)
             val programViewModel = viewModel(modelClass = ProgramViewModel::class.java)
+            val context = applicationContext
             NotesTheme {
                 val programList = programViewModel.programList.collectAsState(initial = emptyList()).value
                 val todayProgram = programList.filter { it.dayOfWeek == programViewModel.currentDayOfWeek }

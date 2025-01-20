@@ -1,8 +1,6 @@
 package com.example.notes.presentation.screens.diet
 
 import android.annotation.SuppressLint
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.BasicAlertDialog
@@ -57,9 +54,9 @@ fun NewRecipeScreen(
     }
     val emptyIngredient = Ingredient(
         name = "",
-        protein = 0,
-        fat = 0,
-        carbs = 0,
+        protein = 0.0,
+        fat = 0.0,
+        carbs = 0.0,
         mass = 0,
         saveToDb = false
     )
@@ -92,10 +89,11 @@ fun NewRecipeScreen(
                         val totalCarbs = ingredientsList.sumOf { it.carbs * it.mass/100 } * totalMass/completeMass.value
                         onConfirmButtonClicked(
                             Food(
-                                foodName = recipeName.value,
+                                name = recipeName.value,
                                 protein = totalProtein,
                                 fat = totalFat,
-                                carbs = totalCarbs
+                                carbs = totalCarbs,
+                                imageUrl = null
                             )
                         )
                     }
@@ -270,9 +268,9 @@ private fun IngredientsTable(
                     modifier = Modifier.weight(.25f),
                     onValueChange = {
                         if (protein.value.isNotEmpty())
-                            ingredients[id] = ingredient.copy(protein = protein.value.toInt())
+                            ingredients[id] = ingredient.copy(protein = protein.value.toDouble())
                         else
-                            ingredients[id] = ingredient.copy(protein = 0)
+                            ingredients[id] = ingredient.copy(protein = 0.0)
                     }
                 )
                 InputField(
@@ -280,9 +278,9 @@ private fun IngredientsTable(
                     modifier = Modifier.weight(.25f),
                     onValueChange = {
                         if (fat.value.isNotEmpty())
-                            ingredients[id] = ingredient.copy(fat = fat.value.toInt())
+                            ingredients[id] = ingredient.copy(fat = fat.value.toDouble())
                         else
-                            ingredients[id] = ingredient.copy(fat = 0)
+                            ingredients[id] = ingredient.copy(fat = 0.0)
                     }
                 )
                 InputField(
@@ -290,9 +288,9 @@ private fun IngredientsTable(
                     modifier = Modifier.weight(.25f),
                     onValueChange = {
                         if (carbs.value.isNotEmpty())
-                            ingredients[id] = ingredient.copy(carbs = carbs.value.toInt())
+                            ingredients[id] = ingredient.copy(carbs = carbs.value.toDouble())
                         else
-                            ingredients[id] = ingredient.copy(carbs = 0)
+                            ingredients[id] = ingredient.copy(carbs = 0.0)
                     }
                 )
                 InputField(
@@ -403,9 +401,9 @@ private fun NewRecipeTopBar(
 
 private data class Ingredient(
     var name: String,
-    var protein: Int,
-    var fat: Int,
-    var carbs: Int,
+    var protein: Double,
+    var fat: Double,
+    var carbs: Double,
     var mass: Int,
     var saveToDb: Boolean
 )

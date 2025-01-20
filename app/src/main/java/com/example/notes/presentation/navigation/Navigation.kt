@@ -1,11 +1,13 @@
 package com.example.notes.presentation.navigation
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import coil3.Bitmap
 import com.example.notes.data.local.food.Food
 import com.example.notes.data.local.program.Exercise
 import com.example.notes.data.local.program.Program

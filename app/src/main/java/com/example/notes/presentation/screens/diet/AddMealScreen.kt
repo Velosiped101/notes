@@ -313,7 +313,7 @@ private fun PickedFoodListScreen(
     LazyColumn {
         items(pickedFoodList.entries.toList()) {
             PickedFoodListItem(
-                name = it.key.foodName,
+                name = it.key.name,
                 mass = it.value,
                 onEdit = {
                     massText.value = it.value.toString()
@@ -504,7 +504,7 @@ private fun Preview() {
         onSearch = { /*TODO*/ },
         foodHolderState = mutableStateOf(FoodHolder.Success(null)),
         massText = mutableStateOf("500"),
-        pickedFood = mutableStateOf(Food(foodName = "sasf", protein = 40, fat = 10, carbs = 25)),
+        pickedFood = mutableStateOf(Food(name = "sasf", protein = 40.2, fat = 10.0, carbs = 25.0, imageUrl = null)),
         onClick = { /*TODO*/ },
         pickedFoodList = mutableMapOf(),
         onBackButtonClicked = { /*TODO*/ },

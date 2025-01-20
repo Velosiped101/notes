@@ -66,9 +66,9 @@ fun DietCard(
         targetValue = if (isMealHistoryExpanded.value) 180f else 0f,
         label = "animate"
     )
-    val totalProtein = mealHistory.sumOf { it.protein * it.mass/100 }
-    val totalFat = mealHistory.sumOf { it.fat * it.mass/100 }
-    val totalCarbs = mealHistory.sumOf { it.carbs * it.mass/100 }
+    val totalProtein = mealHistory.sumOf { it.protein.toDouble() * it.mass/100 }
+    val totalFat = mealHistory.sumOf { it.fat.toDouble() * it.mass/100 }
+    val totalCarbs = mealHistory.sumOf { it.carbs.toDouble() * it.mass/100 }
     val totalCals = (totalProtein + totalCarbs) * 4 + totalFat * 9
     val mealHistoryColumnHeight = 180.dp
     Card(
@@ -99,7 +99,7 @@ fun DietCard(
             )
             Spacer(modifier = Modifier.height(8.dp))
             LinearProgressIndicator(
-                progress = {totalCals/2500f},
+                progress = {(totalCals/2500.0).toFloat()},
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -185,7 +185,7 @@ fun DietCard(
 private fun NutrientText(
     modifier: Modifier = Modifier,
     nutrientType: String,
-    nutrientCount: Int
+    nutrientCount: Double
 ) {
     Column(
         modifier = modifier,
@@ -203,7 +203,7 @@ private fun MealHistoryItem(
     time: String,
     name: String,
     mass: Int,
-    cals: Int
+    cals: Double
 ) {
     Row(
         modifier = Modifier
